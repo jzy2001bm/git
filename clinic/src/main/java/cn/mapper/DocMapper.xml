@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.mapper.DocMapper">
+    <resultMap id="doctors" type="doctor">
+        <id property="did" column="did"></id>
+        <result property="dname" column="dname"></result>
+        <result property="dsex" column="dsex"></result>
+        <result property="dage" column="dage"></result>
+        <result property="dtel" column="dtel"></result>
+        <result property="dpost" column="dpost"></result>
+        <result property="dtime" column="dtime"></result>
+        <association property="depart" javaType="depart">
+            <id property="deid" column="deid"></id>
+            <result property="dename" column="dename"></result>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="doctors" parameterType="page">
+        SELECT * FROM doctor d LEFT JOIN depart de ON d.deid=de.deid where dname like concat('%',#{dname},'%') and status=#{status} limit #{start},#{pagesize}
+    </select>
+    <select id="count" resultType="int">
+        select count(*) from doctor
+    </select>
+    <update id="updates" parameterType="doctor">
+        update doctor set status=#{status} where did=#{did}
+    </update>
+
+    <insert id="insert" parameterType="doctor">
+        insert into doctor values(null,#{dname},#{dsex},#{dage},#{dtel},#{depart.deid},#{dpost},#{dtime},#{status})
+    </insert>
+</mapper>
